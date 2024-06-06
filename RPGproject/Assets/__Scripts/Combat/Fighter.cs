@@ -1,9 +1,8 @@
 
-using UnityEngine;
-using RPG.Movement;
-using Unity.VisualScripting;
-using RPG.Core;
 using RPG.core;
+using RPG.Core;
+using RPG.Movement;
+using UnityEngine;
 
 namespace RPG.Combat
 {
@@ -45,24 +44,33 @@ namespace RPG.Combat
 
             if (timeSinceLastAttack > timeBetweemAttacks)
             {
-                // This will Trigger the Hit() event
-                GetComponent<Animator>().SetTrigger("attack");
+                TriggerAttack();
                 timeSinceLastAttack = 0.0f;
-              
             }
         }
+
+        private void TriggerAttack()
+        {
+            GetComponent<Animator>().ResetTrigger("stopAttack");
+            // This will Trigger the Hit() event
+            GetComponent<Animator>().SetTrigger("attack");
+    
+
+        }
+
         // Animation Event
         void Hit()
         {
+            if (target == null) return;
             target.TakeDamage(weaponDamage);
         }
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) <= weaponRange;
         }
 
-        public bool CanAttack(CombatTarget combatTarget)
+        public bool CanAttack(GameObject combatTarget)
         {
 
             if (combatTarget == null) return false;
@@ -71,7 +79,7 @@ namespace RPG.Combat
             return targetToTest != null && !targetToTest.IsDead();
         }
 
-        public void Attack(CombatTarget combatTarget)
+        public void Attack(GameObject combatTarget)
         {
 
             GetComponent<ActionScheduler>().StartAction(this);
@@ -80,12 +88,18 @@ namespace RPG.Combat
         }
         public void Cancel()
         {
+            StopAttack();
+            target = null;
+        }
+
+        private void StopAttack()
+        {
+            GetComponent<Animator>().ResetTrigger("attack");
+
             GetComponent<Animator>().SetTrigger("stopAttack");
-            target = null; 
         }
 
 
-     
 
     }
     

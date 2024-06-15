@@ -15,6 +15,9 @@ namespace RPG.Movement
         public Transform target;
 
         NavMeshAgent navAgent;
+
+
+        Health health;
         // Ray lastRay;
 
 
@@ -22,12 +25,13 @@ namespace RPG.Movement
         void Start()
         {
             navAgent = GetComponent<NavMeshAgent>();
+            health = GetComponent<Health>();    
 
         }
 
         void Update()
         {
-
+            navAgent.enabled = !health.IsDead();
             UpdateAnimator();
         }
         public void StartMoveAction(Vector3 destination)

@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using RPG.Movement;
 using RPG.Combat;
+using System.Runtime.InteropServices;
+using RPG.Core;
 
 namespace RPG.Control
 {
     public class PlayerController : MonoBehaviour
     {
+        Health health;
         // Start is called before the first frame update
         void Start()
         {
-
+            health = GetComponent<Health>();
         }
 
         // Update is called once per frame
@@ -19,7 +22,9 @@ namespace RPG.Control
 
         void Update()
         {
-          if (InteractWithCombat()) return;
+            if (health.IsDead()) return;
+
+            if (InteractWithCombat()) return;
           if (InteractWithMovmement()) return;
 
             print("Nothing to do");

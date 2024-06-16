@@ -1,4 +1,3 @@
-using RPG.core;
 using UnityEngine;
 namespace RPG.Core
 {

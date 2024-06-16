@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using RPG.Combat;
 using RPG.Core;
-using RPG.core;
 
 namespace RPG.Movement
 {

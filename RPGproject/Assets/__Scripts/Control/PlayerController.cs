@@ -10,6 +10,9 @@ namespace RPG.Control
 {
     public class PlayerController : MonoBehaviour
     {
+
+		[SerializeField] float radius = 5.0f;
+
         Health health;
         // Start is called before the first frame update
         void Start()
@@ -74,6 +77,12 @@ namespace RPG.Control
         private static Ray GetMouseRay()
         {
             return Camera.main.ScreenPointToRay(Input.mousePosition);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, radius);
         }
     }
 }

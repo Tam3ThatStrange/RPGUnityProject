@@ -15,18 +15,22 @@ namespace RPG.Control
 		[SerializeField] float chaseDistance = 5.0f;
         [SerializeField] float suspicionTime = 3.0f;
 
-        Fighter fighter;
+        [SerializeField] PatrolPath patrolPath;   
+        [SerializeField] float waypointTolerance = 1f;   
+         Fighter fighter;
 		GameObject player;
         Health health;
         Mover mover;
         Vector3 guardLocation;
         float timeSinceLastSawPlayer = Mathf.Infinity;
+        int currentWaypointIndex = 0;
 
 		void Start()
 		{
 			fighter = GetComponent<Fighter>();
             health = GetComponent<Health>();
 			player = GameObject.FindGameObjectWithTag("Player");
+            mover = GetComponent<Mover>();
 
             guardLocation = gameObject.transform.position;
 		}
@@ -47,15 +51,40 @@ namespace RPG.Control
             }
             else
             {
-                GuardBehaviour();
+                PatrolBehaviour();
             }
 
             timeSinceLastSawPlayer += Time.deltaTime;
         }
 
-        private void GuardBehaviour()
+        private void PatrolBehaviour()
         {
-            mover.StartMoveAction(guardLocation);
+            Vector3 nextPostion = guardLocation;
+            if(patrolPath != null)
+            {
+                if (AtWayypoint())
+                {
+                    CycleWaypoint();
+                }
+                nextPostion = GetCurrentWaypoint();
+            }
+            mover.StartMoveAction(nextPostion);
+        }
+
+        private Vector3 GetCurrentWaypoint()
+        {
+            return patrolPath.GetWaypoint(currentWaypointIndex);
+        }
+
+        private void CycleWaypoint()
+        {
+            currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+        }
+
+        private bool AtWayypoint()
+        {
+            float distanceToWaypoint = Vector3.Distance(transform.position , GetCurrentWaypoint());
+            return distanceToWaypoint < waypointTolerance;
         }
 
         private void SuspicionBehaviour()

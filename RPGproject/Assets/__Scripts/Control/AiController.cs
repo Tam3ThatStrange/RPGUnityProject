@@ -16,13 +16,16 @@ namespace RPG.Control
         [SerializeField] float suspicionTime = 3.0f;
 
         [SerializeField] PatrolPath patrolPath;   
-        [SerializeField] float waypointTolerance = 1f;   
+        [SerializeField] float waypointTolerance = 1f;
+        [SerializeField] float waypointDwellTime = 3.0f;
+
          Fighter fighter;
 		GameObject player;
         Health health;
         Mover mover;
         Vector3 guardLocation;
         float timeSinceLastSawPlayer = Mathf.Infinity;
+        float timeSinceArivedAtWaypoint = Mathf.Infinity;
         int currentWaypointIndex = 0;
 
 		void Start()
@@ -42,7 +45,6 @@ namespace RPG.Control
 
             if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
             {
-                timeSinceLastSawPlayer = 0.0f;
                 AttackBehaviour();
             }
             else if (timeSinceLastSawPlayer < suspicionTime)
@@ -54,21 +56,33 @@ namespace RPG.Control
                 PatrolBehaviour();
             }
 
+            UpdateTimers();
+        }
+
+        private void UpdateTimers()
+        {
             timeSinceLastSawPlayer += Time.deltaTime;
+            timeSinceArivedAtWaypoint += Time.deltaTime;
         }
 
         private void PatrolBehaviour()
         {
             Vector3 nextPostion = guardLocation;
-            if(patrolPath != null)
+            if (patrolPath != null)
             {
                 if (AtWayypoint())
                 {
+                    timeSinceArivedAtWaypoint = 0.0f;
                     CycleWaypoint();
                 }
                 nextPostion = GetCurrentWaypoint();
             }
-            mover.StartMoveAction(nextPostion);
+
+
+            if (timeSinceArivedAtWaypoint > waypointDwellTime)
+            {
+                mover.StartMoveAction(nextPostion);
+            }
         }
 
         private Vector3 GetCurrentWaypoint()
@@ -95,6 +109,7 @@ namespace RPG.Control
 
         private void AttackBehaviour()
         {
+            timeSinceLastSawPlayer = 0.0f;
             fighter.Attack(player);
         }
 

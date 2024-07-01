@@ -1,6 +1,7 @@
 
 using RPG.Core;
 using RPG.Movement;
+using RPGCharacterAnims.Lookups;
 using System;
 using UnityEngine;
 
@@ -21,7 +22,9 @@ namespace RPG.Combat
 
         private void Start()
         {
-            SpawnWeapon();  
+            SpawnWeapon();
+            
+           
         }
 
       

@@ -1,6 +1,7 @@
 
 using RPG.Core;
 using RPG.Movement;
+using System;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -12,11 +13,20 @@ namespace RPG.Combat
         [SerializeField] float timeBetweemAttacks = 1.0f;
 
         [SerializeField] float weaponDamage = 5f;
+        [SerializeField] GameObject weaponPrefab = null;
+        [SerializeField] Transform handTransform = null;
 
         Health target;
         float timeSinceLastAttack = 0.0f;
-       
-       private void Update()
+
+        private void Start()
+        {
+            SpawnWeapon();  
+        }
+
+      
+
+        private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
 
@@ -25,7 +35,7 @@ namespace RPG.Combat
             
             if (!GetIsInRange())
             {
-                GetComponent<Mover>().MoveTo(target.transform.position);
+                GetComponent<Mover>().MoveTo(target.transform.position, 1f);
             }
             else
             {
@@ -36,7 +46,11 @@ namespace RPG.Combat
 
 
         }
-
+        private void SpawnWeapon()
+        {
+            print(weaponPrefab);
+            Instantiate(weaponPrefab, handTransform);
+        }
         private void AttackBehaviour()
         {
             transform.LookAt(target.transform);
@@ -46,6 +60,7 @@ namespace RPG.Combat
                 TriggerAttack();
                 timeSinceLastAttack = 0.0f;
             }
+          
         }
 
         private void TriggerAttack()
